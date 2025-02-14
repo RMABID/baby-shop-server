@@ -23,10 +23,20 @@ async function run() {
   try {
     const productCollection = client.db("Baby-Shop").collection("products");
 
+    //Product Collection
+
+    app.get("/all-product", async (req, res) => {
+      const result = await productCollection.find().toArray();
+      res.send(result);
+    });
+
     //add product
-    app.post("/product", async (req, res) => {
+    app.post("/add-product", async (req, res) => {
       const newProduct = req.body;
-      const result = await productCollection.insertOne(newProduct);
+      const result = await productCollection.insertOne({
+        ...newProduct,
+        Timestamp: Date.now(),
+      });
       console.log(result);
       res.send(result);
     });

@@ -22,6 +22,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const productCollection = client.db("Baby-Shop").collection("products");
+    const userCollection = client.db("Baby-Shop").collection("users");
 
     //Product Collection
 
@@ -44,6 +45,22 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await productCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //====User Collection ===//
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      const query = { email: newUser?.email };
+      const isExist = await userCollection.findOne(query);
+      if (isExist) {
+        return res.send({ message: "User Already Existed", insertedId: null });
+      }
+      const result = await userCollection.insertOne({
+        ...newUser,
+        role: "User",
+        Timestamp: Date.now(),
+      });
       res.send(result);
     });
 

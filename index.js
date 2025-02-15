@@ -27,7 +27,15 @@ async function run() {
     //Product Collection
 
     app.get("/all-products", async (req, res) => {
-      const result = await productCollection.find().toArray();
+      const sort = req.query.sort;
+      let sortPrice = 1;
+      if (sort === "desc") {
+        sortPrice = -1;
+      }
+      const result = await productCollection
+        .find()
+        .sort({ price: sortPrice })
+        .toArray();
       res.send(result);
     });
 

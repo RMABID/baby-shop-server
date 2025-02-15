@@ -69,6 +69,17 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const role = req.body;
+      const filter = { email };
+      let updatedRole = {
+        $set: { role: role.role },
+      };
+      const result = await userCollection.updateOne(filter, updatedRole);
+      res.send(result);
+    });
+
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

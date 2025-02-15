@@ -49,6 +49,11 @@ async function run() {
     });
 
     //====User Collection ===//
+    app.get("/all-users", async (req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    });
+
     app.post("/users", async (req, res) => {
       const newUser = req.body;
       const query = { email: newUser?.email };

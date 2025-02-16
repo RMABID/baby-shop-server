@@ -23,19 +23,27 @@ async function run() {
   try {
     const productCollection = client.db("Baby-Shop").collection("products");
     const userCollection = client.db("Baby-Shop").collection("users");
+    const reviewCollection = client.db("Baby-Shop").collection("reviews");
 
     //Product Collection
 
     app.get("/all-products", async (req, res) => {
       const sort = req.query.sort;
-      let sortPrice = 1;
+      let sortPrice = -1;
       if (sort === "desc") {
-        sortPrice = -1;
+        sortPrice = 1;
       }
       const result = await productCollection
         .find()
         .sort({ price: sortPrice })
         .toArray();
+      res.send(result);
+    });
+
+    app.get("/product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
       res.send(result);
     });
 
@@ -53,6 +61,13 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await productCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //=== Product Reviews ===//
+    app.post("/review", async (req, res) => {
+      const newReview = req.body;
+      const result = await reviewCollection.insertOne(newReview);
       res.send(result);
     });
 

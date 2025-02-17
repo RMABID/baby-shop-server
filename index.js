@@ -24,6 +24,7 @@ async function run() {
     const productCollection = client.db("Baby-Shop").collection("products");
     const userCollection = client.db("Baby-Shop").collection("users");
     const reviewCollection = client.db("Baby-Shop").collection("reviews");
+    const orderCollection = client.db("Baby-Shop").collection("orders");
 
     //Product Collection
 
@@ -106,6 +107,16 @@ async function run() {
         $set: { role: role.role },
       };
       const result = await userCollection.updateOne(filter, updatedRole);
+      res.send(result);
+    });
+
+    //===Orders collection===//
+
+    
+
+    app.post("/order", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
       res.send(result);
     });
 

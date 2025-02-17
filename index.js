@@ -58,6 +58,7 @@ async function run() {
       res.send(result);
     });
 
+
     app.delete("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -120,8 +121,21 @@ async function run() {
 
     app.post("/order", async (req, res) => {
       const order = req.body;
+      const id = order.product_order_id;
       const result = await orderCollection.insertOne(order);
-      res.send(result);
+      const product_query = { _id: new ObjectId(id) };
+      const filter = await productCollection.findOne(product_query);
+      const available_Quantity = filter.quantity - order.total_quantity;
+      const updated_quantity = {
+        $set: {
+          quantity: available_Quantity,
+        },
+      };
+      const updated = await productCollection.updateOne(
+        product_query,
+        updated_quantity
+      );
+      res.send({ result, updated });
     });
 
     await client.connect();

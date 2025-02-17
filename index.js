@@ -65,6 +65,12 @@ async function run() {
     });
 
     //=== Product Reviews ===//
+    app.get("/all-reviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { product_id: id };
+      const result = await reviewCollection.find(query).toArray();
+      res.send(result);
+    });
     app.post("/review", async (req, res) => {
       const newReview = req.body;
       const result = await reviewCollection.insertOne(newReview);

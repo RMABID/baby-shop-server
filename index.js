@@ -58,7 +58,6 @@ async function run() {
       res.send(result);
     });
 
-
     app.delete("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -135,6 +134,27 @@ async function run() {
         product_query,
         updated_quantity
       );
+      res.send({ result, updated });
+    });
+
+    // Delete order and updated product quantity //
+    app.delete("/order-product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const isFind = await orderCollection.findOne(query);
+      const productId = isFind.product_order_id;
+      const productQuery = { _id: new ObjectId(productId) };
+
+      const isProduct = await productCollection.findOne(productQuery);
+
+      const updated_quantity = {
+        $set: { quantity: isProduct.quantity + isFind.total_quantity },
+      };
+      const updated = await productCollection.updateOne(
+        productQuery,
+        updated_quantity
+      );
+      const result = await orderCollection.deleteOne(query);
       res.send({ result, updated });
     });
 
